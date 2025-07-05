@@ -362,38 +362,7 @@ struct WatchSchedulerView: View {
         }
     }
     
-    private func generateSixSixSchedule(totalHours: Double) {
-        let sixHourPeriods = Int(totalHours / 6)
-        let remainder = totalHours.truncatingRemainder(dividingBy: 6)
-        let extraTimePerEnd = remainder / 2
-        
-        var currentTime = startDate
-        var currentPilot = pilot1Name
-        
-        // Add initial extra time if any
-        if extraTimePerEnd > 0 {
-            let endTime = currentTime.addingTimeInterval(extraTimePerEnd * 3600)
-            let duration = calculateDuration(from: currentTime, to: endTime)
-            watchSchedule.append(WatchPeriod(startTime: currentTime, endTime: endTime, pilotName: currentPilot, durationText: duration))
-            currentTime = endTime
-            currentPilot = (currentPilot == pilot1Name) ? pilot2Name : pilot1Name
-        }
-        
-        // Add 6-hour periods
-        for _ in 0..<sixHourPeriods {
-            let endTime = currentTime.addingTimeInterval(6 * 3600)
-            let duration = calculateDuration(from: currentTime, to: endTime)
-            watchSchedule.append(WatchPeriod(startTime: currentTime, endTime: endTime, pilotName: currentPilot, durationText: duration))
-            currentTime = endTime
-            currentPilot = (currentPilot == pilot1Name) ? pilot2Name : pilot1Name
-        }
-        
-        // Add final extra time if any
-        if extraTimePerEnd > 0 && currentTime < endDate {
-            let duration = calculateDuration(from: currentTime, to: endDate)
-            watchSchedule.append(WatchPeriod(startTime: currentTime, endTime: endDate, pilotName: currentPilot, durationText: duration))
-        }
-    }
+    
     
     private func generateHalfwaySchedule(totalHours: Double) {
         let halfTime = totalHours / 2
@@ -417,18 +386,21 @@ struct WatchSchedulerView: View {
         let extraTimePerEnd = remainder / 2
         
         var currentTime = startDate
+        
+        // ALWAYS start with Pilot 1
         var currentPilot = pilot1Name
         
-        // Add initial extra time if any
+        // Add initial extra time if any (always Pilot 1)
         if extraTimePerEnd > 0 {
             let endTime = currentTime.addingTimeInterval(extraTimePerEnd * 3600)
             let duration = calculateDuration(from: currentTime, to: endTime)
-            watchSchedule.append(WatchPeriod(startTime: currentTime, endTime: endTime, pilotName: currentPilot, durationText: duration))
+            watchSchedule.append(WatchPeriod(startTime: currentTime, endTime: endTime, pilotName: pilot1Name, durationText: duration))
             currentTime = endTime
-            currentPilot = (currentPilot == pilot1Name) ? pilot2Name : pilot1Name
+            // After initial period, switch to the other pilot
+            currentPilot = pilot2Name
         }
         
-        // Add max watch periods
+        // Add max watch periods (alternating)
         for _ in 0..<maxWatchPeriods {
             let endTime = currentTime.addingTimeInterval(maxWatch * 3600)
             let duration = calculateDuration(from: currentTime, to: endTime)
@@ -437,10 +409,10 @@ struct WatchSchedulerView: View {
             currentPilot = (currentPilot == pilot1Name) ? pilot2Name : pilot1Name
         }
         
-        // Add final extra time if any
+        // Add final extra time if any (always Pilot 2)
         if extraTimePerEnd > 0 && currentTime < endDate {
             let duration = calculateDuration(from: currentTime, to: endDate)
-            watchSchedule.append(WatchPeriod(startTime: currentTime, endTime: endDate, pilotName: currentPilot, durationText: duration))
+            watchSchedule.append(WatchPeriod(startTime: currentTime, endTime: endDate, pilotName: pilot2Name, durationText: duration))
         }
     }
     
