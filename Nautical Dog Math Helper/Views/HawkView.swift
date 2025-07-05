@@ -29,97 +29,118 @@ struct HawkView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Squat & UKC")
-                        .font(.custom("Avenir", size: 34))
-                        .bold()
-                        .padding()
-                        .foregroundColor(isDark ? .green : .black)
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("Squat & UKC")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
+                            .foregroundColor(isDark ? .green : .black)
 
-                    Text("Formula used: Squat = 2 x Cb x V² / 100\nOutput: water depth(m); max static draft(m); squat(m); UKC(m)")
-                                            .font(.custom("Avenir", size: 16))
-                                            .padding()
-                                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
-                                            .foregroundColor(isDark ? .green : .black)
-                                            .cornerRadius(8)
+                        Text("Formula used: Squat = 2 x Cb x V² / 100\nOutput: Water depth at HW (m); Max static draft(m); Squat(m); UKC(m)")
+                            .font(.custom("Avenir", size: 16))
+                            .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .foregroundColor(isDark ? .green : .black)
+                            .cornerRadius(8)
 
-
-                    VStack(spacing: 20) {
-                        // New user‐input for least charted depth
-                        InputField(
-                            label: "Least Charted Depth (m)",
-                            placeholder: "e.g. 7.6",
-                            text: $leastChartedDepth
-                        )
-
-                        InputField(
-                            label: "Height of Tide at HW (m)",
-                            placeholder: "Enter Height of Tide",
-                            text: $heightOfTide
-                        )
-                        InputField(
-                            label: "Vessel Block Coefficient (Cb)",
-                            placeholder: "Enter Block Coefficient (e.g. 0.8)",
-                            text: $blockCoefficient
-                        )
-                        InputField(
-                            label: "Transit Speed (knots)",
-                            placeholder: "Enter Transit Speed",
-                            text: $transitSpeed
-                        )
-                        InputField(
-                            label: "Vessel Deep Draft (m)",
-                            placeholder: "Enter Deep Draft",
-                            text: $deepDraft
-                        )
-                    }
-
-                    Button("Calculate", action: calculate)
-                        .buttonStyle(FilledButtonStyle())
-                        .padding(.horizontal)
-
-                    Group {
-                        if !waterDepthAtHW.isEmpty {
-                            ResultField(
-                                label: "Water Depth at HW (m):",
-                                value: waterDepthAtHW,
-                                color: isDark ? .green : .black
-                            )
-                        }
-                        if !maxStaticDraft.isEmpty {
-                            ResultField(
-                                label: "Max Static Draft (m):",
-                                value: maxStaticDraft,
-                                color: isDark ? .green : .black
-                            )
-                        }
-                        if !squat.isEmpty {
-                            ResultField(
-                                label: "Squat (m):",
-                                value: squat,
-                                color: isDark ? .green : .black
-                            )
-                        }
-                        if !underkeelClearance.isEmpty {
-                            VStack(alignment: .leading, spacing: 10) {
-                                HighlightedResultField(
-                                    label: "Underkeel Clearance (m):",
-                                    value: underkeelClearance,
-                                    isWarning: ukcWarning
+                        VStack(spacing: 20) {
+                            // First row - 2 fields
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Least Charted Depth",
+                                    placeholder: "meters",
+                                    text: $leastChartedDepth
                                 )
-                                if ukcWarning {
-                                    Text("⚠️ Hawk Inlet SE AK only: Calculated UKC is less than USCG required 1.83 m!")
-                                        .font(.subheadline)
-                                        .foregroundColor(.red)
-                                        .bold()
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Height of Tide at HW",
+                                    placeholder: "meters",
+                                    text: $heightOfTide
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            
+                            // Second row - 2 fields
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Block Coefficient (Cb)",
+                                    placeholder: "e.g. 0.8",
+                                    text: $blockCoefficient
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Transit Speed",
+                                    placeholder: "knots",
+                                    text: $transitSpeed
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            
+                            // Third row - 1 field centered
+                            CompactInputField(
+                                label: "Vessel Deep Draft",
+                                placeholder: "meters",
+                                text: $deepDraft
+                            )
+                            .frame(maxWidth: 200)
+                            .frame(maxWidth: .infinity)
+                        }
+
+                        Button("Calculate", action: calculate)
+                            .buttonStyle(ModernButtonStyle())
+                            .padding(.horizontal)
+
+                        if !waterDepthAtHW.isEmpty {
+                            VStack(spacing: 12) {
+                                ResultField(
+                                    label: "Water Depth at HW (m):",
+                                    value: waterDepthAtHW,
+                                    color: isDark ? .green : Color("AccentColor")
+                                )
+                                ResultField(
+                                    label: "Max Static Draft (m):",
+                                    value: maxStaticDraft,
+                                    color: isDark ? .green : Color("AccentColor")
+                                )
+                                ResultField(
+                                    label: "Squat (m):",
+                                    value: squat,
+                                    color: isDark ? .green : Color("AccentColor")
+                                )
+                                
+                                // Special handling for UKC with warning
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HighlightedResultField(
+                                        label: "Underkeel Clearance (m):",
+                                        value: underkeelClearance,
+                                        isWarning: ukcWarning
+                                    )
+                                    if ukcWarning {
+                                        Text("⚠️ Hawk Inlet SE AK only: Calculated UKC is less than USCG required 1.83 m!")
+                                            .font(.custom("Avenir", size: 14))
+                                            .foregroundColor(.red)
+                                            .bold()
+                                            .padding(.horizontal, 8)
+                                    }
                                 }
                             }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                                    )
+                            )
                         }
-                    }
 
-                    Spacer()
+                        Spacer()
+                    }
                 }
-                .padding()
+                .padding(.vertical)
             }
         }
         .dismissKeyboardOnTap()

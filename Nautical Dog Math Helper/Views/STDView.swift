@@ -27,55 +27,106 @@ struct STDView: View {
             (isDark ? Color.black : Color("TileBackground"))
                 .ignoresSafeArea()
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Speed, Time, Distance Calculator")
-                        .font(.custom("Avenir", size: 34))
-                        .bold()
-                        .padding()
-                        .foregroundColor(isDark ? .green : .black)
-                    
-                    Picker("Select Calculation Type", selection: $calculationType) {
-                        ForEach(CalculationType.allCases) { type in
-                            Text(type.rawValue).tag(type)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding()
-                    // Update segmented appearance when the view appears or when the theme changes:
-                    .onAppear {
-                        updateSegmentedControlAppearance(isDark: isDark)
-                    }
-                    .onChange(of: isDark) { newValue in
-                        updateSegmentedControlAppearance(isDark: newValue)
-                    }
-                    
-                    VStack(spacing: 20) {
-                        if calculationType == .speed {
-                            InputField(label: "Time (hh.hh)", placeholder: "Enter Time", text: $time)
-                            InputField(label: "Distance (nm)", placeholder: "Enter Distance", text: $distance)
-                        } else if calculationType == .time {
-                            InputField(label: "Speed (knots)", placeholder: "Enter Speed", text: $speed)
-                            InputField(label: "Distance (nm)", placeholder: "Enter Distance", text: $distance)
-                        } else {
-                            InputField(label: "Speed (knots)", placeholder: "Enter Speed", text: $speed)
-                            InputField(label: "Time (hh.hh)", placeholder: "Enter Time", text: $time)
-                        }
-                    }
-                    
-                    Button("Calculate", action: calculate)
-                        .buttonStyle(FilledButtonStyle())
-                        .padding(.horizontal)
-                    
-                    if !calculatedValue.isEmpty {
-                        Text("\(calculationType.rawValue): \(calculatedValue)")
-                            .font(.headline)
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("Speed, Time, Distance Calculator")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
                             .foregroundColor(isDark ? .green : .black)
+                        
+                        Picker("Select Calculation Type", selection: $calculationType) {
+                            ForEach(CalculationType.allCases) { type in
+                                Text(type.rawValue).tag(type)
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding(.horizontal)
+                        .onAppear {
+                            updateSegmentedControlAppearance(isDark: isDark)
+                        }
+                        .onChange(of: isDark) { newValue in
+                            updateSegmentedControlAppearance(isDark: newValue)
+                        }
+                        
+                        VStack(spacing: 20) {
+                            HStack(spacing: 16) {
+                                if calculationType == .speed {
+                                    CompactInputField(
+                                        label: "Time",
+                                        placeholder: "hh.hh",
+                                        text: $time
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    CompactInputField(
+                                        label: "Distance",
+                                        placeholder: "nm",
+                                        text: $distance
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                } else if calculationType == .time {
+                                    CompactInputField(
+                                        label: "Speed",
+                                        placeholder: "knots",
+                                        text: $speed
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    CompactInputField(
+                                        label: "Distance",
+                                        placeholder: "nm",
+                                        text: $distance
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                } else {
+                                    CompactInputField(
+                                        label: "Speed",
+                                        placeholder: "knots",
+                                        text: $speed
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    CompactInputField(
+                                        label: "Time",
+                                        placeholder: "hh.hh",
+                                        text: $time
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                }
+                            }
+                        }
+                        
+                        Button("Calculate", action: calculate)
+                            .buttonStyle(ModernButtonStyle())
+                            .padding(.horizontal)
+                        
+                        if !calculatedValue.isEmpty {
+                            HStack {
+                                Text("\(calculationType.rawValue):")
+                                    .font(.custom("Avenir", size: 16))
+                                    .fontWeight(.medium)
+                                    .foregroundColor(isDark ? .green : Color("AccentColor"))
+                                Spacer()
+                                Text(calculatedValue)
+                                    .font(.custom("Avenir", size: 20))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(isDark ? .green : Color("AccentColor"))
+                            }
                             .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
                 }
-                .padding()
+                .padding(.vertical)
             }
         }
         .dismissKeyboardOnTap()
@@ -134,3 +185,5 @@ struct STDView_Previews: PreviewProvider {
         .preferredColorScheme(.dark)
     }
 }
+
+

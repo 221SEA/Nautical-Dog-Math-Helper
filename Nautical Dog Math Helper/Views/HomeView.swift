@@ -6,9 +6,24 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
+            // Background color
             (nightMode.isEnabled ? Color.black : Color.white)
                 .ignoresSafeArea()
-
+            
+            // Watermark logo - using overlay instead
+                    Color.clear
+                        .overlay(
+                            Image("Logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 800, height: 800)
+                                .opacity(nightMode.isEnabled ? 0.03 : 0.05)
+                                .foregroundColor(nightMode.isEnabled ? .green : Color("AccentColor"))
+                                .rotationEffect(.degrees(15))
+                        )
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+            
             ScrollView {
                 VStack(spacing: 20) {
                     Text("Nautical Dog\nMath's Best Friend")

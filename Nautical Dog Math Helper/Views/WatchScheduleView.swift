@@ -16,46 +16,48 @@ struct WatchScheduleView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Watch Schedule")
-                        .font(.custom("Avenir", size: 34)).bold()
-                        .foregroundColor(isDark ? .green : .black)
-                    
-                    Text("Calculate total time underway or create a watch schedule for 2 pilots.\nFor Custom watch schedule, calculator assumes equal time split between both pilots with remainder of time on either end. For example 18 hrs underway with max 6 hour watch would be split 3/6/6/3.")
-                        .font(.custom("Avenir", size: 16))
-                        .padding()
-                        .background(isDark ? Color.white.opacity(0.05)
-                                           : Color.gray.opacity(0.1))
-                        .foregroundColor(isDark ? .green : .black)
-                        .cornerRadius(8)
-                    
-                    // Feature Selection
-                    Picker("Feature", selection: $selectedFeature) {
-                        Text("Time Calculator").tag(WatchFeature.timeCalculator)
-                        Text("Watch Schedule").tag(WatchFeature.watchSchedule)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding(.horizontal)
-                    .onAppear {
-                        updateSegmentedControlAppearance(isDark: isDark)
-                    }
-                    .onChange(of: isDark) { newValue in
-                        updateSegmentedControlAppearance(isDark: newValue)
-                    }
-                    
-                    // Show selected feature
-                    Group {
-                        if selectedFeature == .timeCalculator {
-                            TimeCalculatorView()
-                        } else {
-                            WatchSchedulerView()
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("Watch Schedule")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
+                            .foregroundColor(isDark ? .green : .black)
+                        
+                        Text("Calculate total time underway or create a watch schedule for 2 pilots.\nFor Custom watch schedule, calculator assumes equal time split between both pilots with remainder of time on either end. For example 18 hrs underway with max 6 hour watch would be split 3/6/6/3.")
+                            .font(.custom("Avenir", size: 16))
+                            .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .foregroundColor(isDark ? .green : .black)
+                            .cornerRadius(8)
+                        
+                        // Feature Selection
+                        Picker("Feature", selection: $selectedFeature) {
+                            Text("Time Calculator").tag(WatchFeature.timeCalculator)
+                            Text("Watch Schedule").tag(WatchFeature.watchSchedule)
                         }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding(.horizontal)
+                        .onAppear {
+                            updateSegmentedControlAppearance(isDark: isDark)
+                        }
+                        .onChange(of: isDark) { newValue in
+                            updateSegmentedControlAppearance(isDark: newValue)
+                        }
+                        
+                        // Show selected feature
+                        Group {
+                            if selectedFeature == .timeCalculator {
+                                TimeCalculatorView()
+                            } else {
+                                WatchSchedulerView()
+                            }
+                        }
+                        .environmentObject(nightMode)
+                        
+                        Spacer()
                     }
-                    .environmentObject(nightMode)
-                    
-                    Spacer()
                 }
-                .padding()
+                .padding(.vertical)
             }
         }
         .dismissKeyboardOnTap()
@@ -129,23 +131,31 @@ struct TimeCalculatorView: View {
             }
             
             Button("Calculate Total Time", action: calculateTotalTime)
-                .buttonStyle(FilledButtonStyle())
+                .buttonStyle(ModernButtonStyle())
                 .padding(.horizontal)
             
             if !totalTime.isEmpty {
                 VStack(spacing: 10) {
                     Text("Total Time Underway")
-                        .font(.headline)
-                        .foregroundColor(isDark ? .green : .black)
+                        .font(.custom("Avenir", size: 16))
+                        .fontWeight(.medium)
+                        .foregroundColor(isDark ? .green : Color("AccentColor"))
                     
                     Text(totalTime)
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(isDark ? .green : .black)
+                        .font(.custom("Avenir", size: 24))
+                        .fontWeight(.semibold)
+                        .foregroundColor(isDark ? .green : Color("AccentColor"))
                 }
                 .padding()
-                .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
-                .cornerRadius(8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                        )
+                )
+                
             }
         }
     }
@@ -272,7 +282,7 @@ struct WatchSchedulerView: View {
             }
             
             Button("Generate Schedule", action: generateSchedule)
-                .buttonStyle(FilledButtonStyle())
+                .buttonStyle(ModernButtonStyle())
                 .padding(.horizontal)
             
             // Error Message
@@ -287,27 +297,35 @@ struct WatchSchedulerView: View {
             if !totalTimeText.isEmpty {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Total Time Underway: \(totalTimeText)")
-                        .font(.headline)
-                        .foregroundColor(isDark ? .green : .black)
+                        .font(.custom("Avenir", size: 18))
+                        .fontWeight(.semibold)
+                        .foregroundColor(isDark ? .green : Color("AccentColor"))
                     
                     if !watchSchedule.isEmpty {
                         Text("Watch Schedule:")
-                            .font(.headline)
-                            .foregroundColor(isDark ? .green : .black)
+                            .font(.custom("Avenir", size: 18))
+                            .fontWeight(.semibold)
+                            .foregroundColor(isDark ? .green : Color("AccentColor"))
                             .padding(.top, 10)
                         
                         ForEach(watchSchedule) { period in
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("\(formatDate(period.startTime)) - \(formatTime(period.endTime)) \(period.pilotName) (\(period.durationText))")
-                                    .font(.subheadline)
-                                    .foregroundColor(isDark ? .green : .black)
+                                    .font(.custom("Avenir", size: 16))
+                                    .foregroundColor(isDark ? .green : Color("AccentColor"))
                             }
                         }
                     }
                 }
                 .padding()
-                .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
-                .cornerRadius(8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                        )
+                )
             }
         }
     }

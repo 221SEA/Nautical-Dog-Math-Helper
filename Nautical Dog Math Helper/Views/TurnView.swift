@@ -20,52 +20,86 @@ struct TurnView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Turn Calculator")
-                        .font(.custom("Avenir", size: 34)).bold()
-                        .foregroundColor(isDark ? .green : .black)
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("Turn Calculator")
+                            .font(.custom("Avenir", size: 34)).bold()
+                            .foregroundColor(isDark ? .green : .black)
 
-                    Text("This calculates the distance you need to place your parallel index (PI) line ahead of the ship. For larger / faster moving ships, you may need to add up to 0.15nm.\nPlace the PI at the intersection of the distance VRM and the true course vector (COG).\nOutput includes delta of c/c for user to check validity of response.")
-                        .font(.custom("Avenir", size: 16))
-                        .padding()
-                        .background(isDark ? Color.white.opacity(0.05)
-                                           : Color.gray.opacity(0.1))
-                        .foregroundColor(isDark ? .green : .black)
-                        .cornerRadius(8)
+                        Text("This calculates the distance you need to place your parallel index (PI) line ahead of the ship. For larger / faster moving ships, you may need to add up to 0.15nm.\nPlace the PI at the intersection of the distance VRM and your current true course vector (COG).\nOutput includes delta of c/c for user to check validity of response.")
+                            .font(.custom("Avenir", size: 16))
+                            .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .foregroundColor(isDark ? .green : .black)
+                            .cornerRadius(8)
 
-                    VStack(spacing: 20) {
-                        InputField(label:       "Radius of Turn (nm)",
-                                   placeholder: "Enter Radius",
-                                   text:        $radius)
-                        InputField(label:       "Leg 1 of Turn (°) [COG]",
-                                   placeholder: "Enter Leg 1",
-                                   text:        $leg1)
-                        InputField(label:       "Leg 2 of Turn (°)",
-                                   placeholder: "Enter Leg 2",
-                                   text:        $leg2)
-                    }
-
-                    Button("Calculate", action: calculate)
-                        .buttonStyle(FilledButtonStyle())
-                        .padding(.horizontal)
-
-                    VStack(spacing: 20) {
-                        if !piForTurn.isEmpty {
-                            Text("VRM distance to set PI: \(piForTurn) nm")
-                                .font(.headline)
-                                .foregroundColor(isDark ? .green : .black)
+                        VStack(spacing: 20) {
+                            // Radius on its own row (primary input)
+                            CompactInputField(
+                                label: "Radius of Turn",
+                                placeholder: "nm",
+                                text: $radius
+                            )
+                            .frame(maxWidth: 200)
+                            
+                            // Leg 1 and Leg 2 side by side
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Leg 1",
+                                    placeholder: "COG°",
+                                    text: $leg1
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Leg 2",
+                                    placeholder: "Course °",
+                                    text: $leg2
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
                         }
-                        if !delta.isEmpty {
-                            Text("Delta of Course Change: \(delta)°")
-                                .font(.headline)
-                                .foregroundColor(isDark ? .green : .black)
-                        }
-                    }
-                    .padding()
 
-                    Spacer()
+                        Button("Calculate", action: calculate)
+                            .buttonStyle(ModernButtonStyle())
+                            .padding(.horizontal)
+
+                        if !piForTurn.isEmpty || !delta.isEmpty {
+                            VStack(spacing: 12) {
+                                if !piForTurn.isEmpty {
+                                    HStack {
+                                        Text("VRM distance to set PI:")
+                                            .font(.subheadline)
+                                            .foregroundColor(isDark ? .green : .black)
+                                        Spacer()
+                                        Text("\(piForTurn) nm")
+                                            .font(.headline)
+                                            .bold()
+                                            .foregroundColor(isDark ? .green : .black)
+                                    }
+                                }
+                                if !delta.isEmpty {
+                                    HStack {
+                                        Text("Delta of Course Change:")
+                                            .font(.subheadline)
+                                            .foregroundColor(isDark ? .green : .black)
+                                        Spacer()
+                                        Text("\(delta)°")
+                                            .font(.headline)
+                                            .bold()
+                                            .foregroundColor(isDark ? .green : .black)
+                                    }
+                                }
+                            }
+                            .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .cornerRadius(8)
+                        }
+
+                        Spacer()
+                    }
                 }
-                .padding()
+                .padding(.vertical)
             }
         }
         .dismissKeyboardOnTap()

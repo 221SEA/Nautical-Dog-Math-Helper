@@ -21,44 +21,90 @@ struct SweptPathView: View {
             (isDark ? Color.black : Color("TileBackground"))
                 .ignoresSafeArea()
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Swept Path Calculator")
-                        .font(.custom("Avenir", size: 34))
-                        .bold()
-                        .padding()
-                        .foregroundColor(isDark ? .green : .black)
-                    Text("Output of swept path distances are calculated for 2° - 10° drift angles, in 2° increments. Add an additional angle (i.e. 5°) below to include the results for that angle in the output data.")
-                                            .font(.custom("Avenir", size: 16))
-                                            .padding()
-                                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
-                                            .foregroundColor(isDark ? .green : .black)
-                                            .cornerRadius(8)
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("Swept Path Calculator")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
+                            .foregroundColor(isDark ? .green : .black)
+                        
+                        Text("Output of swept path distances are calculated for 2° - 10° drift angles, in 2° increments. Add an additional angle (i.e. 5°) below to include the results for that angle in the output data.")
+                            .font(.custom("Avenir", size: 16))
+                            .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .foregroundColor(isDark ? .green : .black)
+                            .cornerRadius(8)
 
-                    
-                    InputField(label: "Vessel Length (meters)", placeholder: "Enter vessel length", text: $vesselLength)
-                    InputField(label: "Vessel Beam (meters)", placeholder: "Enter vessel beam", text: $vesselBeam)
-                    InputField(label: "Additional Drift Angle (deg, optional)", placeholder: "e.g., 5", text: $additionalDriftAngle)
-                    
-                    Button("Calculate", action: calculate)
-                        .buttonStyle(FilledButtonStyle())
-                        .padding(.horizontal)
-                    
-                    if !results.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            ForEach(results.indices, id: \.self) { index in
-                                Text(results[index])
-                                    .font(.headline)
-                                    .foregroundColor(isDark ? .green : .black)
+                        VStack(spacing: 20) {
+                            // Vessel dimensions side by side
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Vessel Length",
+                                    placeholder: "meters",
+                                    text: $vesselLength
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Vessel Beam",
+                                    placeholder: "meters",
+                                    text: $vesselBeam
+                                )
+                                .frame(maxWidth: .infinity)
                             }
+                            
+                            // Additional drift angle centered
+                            CompactInputField(
+                                label: "Additional Drift Angle (optional)",
+                                placeholder: "degrees",
+                                text: $additionalDriftAngle
+                            )
+                            .frame(maxWidth: 200)
+                            .frame(maxWidth: .infinity)
                         }
-                        .padding(.horizontal)
+                        
+                        Button("Calculate", action: calculate)
+                            .buttonStyle(ModernButtonStyle())
+                            .padding(.horizontal)
+                        
+                        if !results.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Results")
+                                    .font(.custom("Avenir", size: 18))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(isDark ? .green : Color("AccentColor"))
+                                    .padding(.bottom, 4)
+                                
+                                ForEach(results.indices, id: \.self) { index in
+                                    HStack {
+                                        Text(results[index])
+                                            .font(.custom("Avenir", size: 16))
+                                            .foregroundColor(isDark ? .green : Color("AccentColor"))
+                                        Spacer()
+                                    }
+                                    
+                                    if index < results.count - 1 {
+                                        Divider()
+                                            .background(isDark ? Color.green.opacity(0.2) : Color("AccentColor").opacity(0.2))
+                                    }
+                                }
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
                 }
-                .padding()
+                .padding(.vertical)
             }
-            
         }
         .dismissKeyboardOnTap()
         .navigationTitle("Swept Path")

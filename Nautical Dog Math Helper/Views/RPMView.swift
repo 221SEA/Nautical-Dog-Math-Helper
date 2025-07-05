@@ -19,41 +19,80 @@ struct RPMView: View {
             (isDark ? Color.black : Color("TileBackground"))
                 .ignoresSafeArea()
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("RPM Calculator")
-                        .font(.custom("Avenir", size: 34))
-                        .bold()
-                        .padding()
-                        .foregroundColor(isDark ? .green : .black)
-                    Text("This page calculates the new engine RPMs required to achieve a desired speed, given current RPM and SMG. It does not take into account any changes in future set/drift.")
-                        .font(.custom("Avenir", size: 16))
-                        .padding()
-                        .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
-                        .foregroundColor(isDark ? .green : .black)
-                        .cornerRadius(8)
-                    
-                    VStack(spacing: 20) {
-                        InputField(label: "Current RPMs (whole number)", placeholder: "Enter Current RPMs", text: $currentRPM)
-                        InputField(label: "Current Speed (knots)", placeholder: "Enter Current Speed", text: $currentSpeed)
-                        InputField(label: "Desired Speed (knots)", placeholder: "Enter Desired Speed", text: $desiredSpeed)
-                    }
-                    
-                    Button("Calculate", action: calculate)
-                        .buttonStyle(FilledButtonStyle())
-                        .padding(.horizontal)
-                    
-                    if !newRPM.isEmpty {
-                        Text("New RPMs: \(newRPM)")
-                            .font(.headline)
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("RPM Calculator")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
                             .foregroundColor(isDark ? .green : .black)
+                        
+                        Text("This page calculates the new engine RPMs required to achieve a desired speed, given current RPM and SMG. It does not take into account any changes in future set/drift.")
+                            .font(.custom("Avenir", size: 16))
                             .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .foregroundColor(isDark ? .green : .black)
+                            .cornerRadius(8)
+                        
+                        VStack(spacing: 20) {
+                            // First row - current values side by side
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Current RPMs",
+                                    placeholder: "##",
+                                    text: $currentRPM
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Current Speed",
+                                    placeholder: "knots",
+                                    text: $currentSpeed
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            
+                            // Second row - desired speed centered
+                            CompactInputField(
+                                label: "Desired Speed",
+                                placeholder: "knots",
+                                text: $desiredSpeed
+                            )
+                            .frame(maxWidth: 200)
+                            .frame(maxWidth: .infinity)
+                        }
+                        
+                        Button("Calculate", action: calculate)
+                            .buttonStyle(ModernButtonStyle())
+                            .padding(.horizontal)
+                        
+                        if !newRPM.isEmpty {
+                            HStack {
+                                Text("New RPMs:")
+                                    .font(.custom("Avenir", size: 16))
+                                    .fontWeight(.medium)
+                                    .foregroundColor(isDark ? .green : Color("AccentColor"))
+                                Spacer()
+                                Text(newRPM)
+                                    .font(.custom("Avenir", size: 20))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(isDark ? .green : Color("AccentColor"))
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
                 }
-                .padding()
+                .padding(.vertical)
             }
-            
         }
         .dismissKeyboardOnTap()
         .navigationTitle("RPM Calculator")

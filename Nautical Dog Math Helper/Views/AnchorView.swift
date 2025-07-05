@@ -23,51 +23,81 @@ struct AnchorView: View {
             (isDark ? Color.black : Color("TileBackground"))
                 .ignoresSafeArea()
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Anchor Swing Circle Calculator")
-                        .font(.custom("Avenir", size: 34))
-                        .bold()
-                        .padding()
-                        .foregroundColor(isDark ? .green : .black)
-                    Text("Input details and an estimated # of shots on deck.\nOutput: Guidelines for Normal Wx Shots, Rough Wx Shots, Walk Out # of Shots and a calculated Swing Circle")
-                                            .font(.custom("Avenir", size: 16))
-                                            .padding()
-                                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
-                                            .foregroundColor(isDark ? .green : .black)
-                                            .cornerRadius(8)
-
-                    VStack(spacing: 20) {
-                        // Using the shared InputField from ReusableComponents.swift
-                        InputField(label: "Vessel LOA (meters)", placeholder: "Enter Vessel LOA", text: $vesselLOA)
-                        InputField(label: "Bottom Depth (meters)", placeholder: "Enter Bottom Depth", text: $bottomDepth)
-                        InputField(label: "Hawsepipe Freeboard (meters)", placeholder: "Enter Freeboard", text: $hawsepipeFreeboard)
-                        InputField(label: "Initial Shackles on Deck (number)", placeholder: "Enter Shackles", text: $shacklesOnDeck)
-                    }
-                    
-                    Button("Calculate", action: calculate)
-                        .buttonStyle(FilledButtonStyle()) // Using shared FilledButtonStyle
-                        .padding(.horizontal)
-                    
-                    Group {
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("Anchor Swing Circle Calculator")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
+                            .padding()
+                            .foregroundColor(isDark ? .green : .black)
+                        Text("Input details and an estimated # of shots on deck.\nOutput: Guidelines for Normal Wx Shots, Rough Wx Shots, Walk Out # of Shots and a calculated Swing Circle")
+                            .font(.custom("Avenir", size: 16))
+                            .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .foregroundColor(isDark ? .green : .black)
+                            .cornerRadius(8)
+                        
+                        VStack(spacing: 20) {
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Vessel LOA",
+                                    placeholder: "meters",
+                                    text: $vesselLOA
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Bottom Depth",
+                                    placeholder: "meters",
+                                    text: $bottomDepth
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Hawsepipe Freeboard",
+                                    placeholder: "meters",
+                                    text: $hawsepipeFreeboard
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Shackles on Deck",
+                                    placeholder: "shackles",
+                                    text: $shacklesOnDeck
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                        
+                        Button("Calculate", action: calculate)
+                            .buttonStyle(ModernButtonStyle()) // Using shared FilledButtonStyle
+                            .padding(.horizontal)
+                        
                         if !normalWxShots.isEmpty {
-                            ResultField(label: "Normal Weather Guide (# shots):", value: normalWxShots, color: isDark ? .green : .black)
+                            VStack(spacing: 12) {
+                                ResultField(label: "Normal Weather Guide (# shots):", value: normalWxShots, color: isDark ? .green : Color("AccentColor"))
+                                ResultField(label: "Rough Weather Guide (# shots):", value: roughWxShots, color: isDark ? .green : Color("AccentColor"))
+                                ResultField(label: "Walk Out Shots (#):", value: walkOutShots, color: isDark ? .green : Color("AccentColor"))
+                                ResultField(label: "Swing Circle (nm):", value: swingCircle, color: isDark ? .green : Color("AccentColor"))
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                                    )
+                            )
                         }
-                        if !roughWxShots.isEmpty {
-                            ResultField(label: "Rough Weather Guide (# shots):", value: roughWxShots, color: isDark ? .green : .black)
-                        }
-                        if !walkOutShots.isEmpty {
-                            ResultField(label: "Walk Out Shots (#):", value: walkOutShots, color: isDark ? .green : .black)
-                        }
-                        if !swingCircle.isEmpty {
-                            ResultField(label: "Swing Circle (nm):", value: swingCircle, color: isDark ? .green : .black)
-                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
                 }
-                .padding()
+                .padding(.vertical)
             }
-            
         }
         .dismissKeyboardOnTap()  // Using the shared keyboard dismiss extension
         .navigationTitle("Anchor Swing")
@@ -76,7 +106,6 @@ struct AnchorView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(isDark ? .dark : .light, for: .navigationBar)
     }
-    
     private func calculate() {
         guard let loa = Double(vesselLOA),
               let depth = Double(bottomDepth),

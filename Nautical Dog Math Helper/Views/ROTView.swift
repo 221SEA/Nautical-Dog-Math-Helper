@@ -20,57 +20,78 @@ struct ROTView: View {
             (isDark ? Color.black : Color("TileBackground"))
                 .ignoresSafeArea()
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Rate of Turn Calculator")
-                        .font(.custom("Avenir", size: 34))
-                        .bold()
-                        .padding()
-                        .foregroundColor(isDark ? .green : .black)
-                    
-                    Picker("Calculation", selection: $selectedCalculation) {
-                        Text("ROT").tag("ROT")
-                        Text("Radius").tag("Radius")
-                        Text("Speed").tag("Speed")
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding()
-                    // Update segmented appearance when this view appears or theme changes:
-                    .onAppear {
-                        updateSegmentedControlAppearance(isDark: isDark)
-                    }
-                    .onChange(of: isDark) { newValue in
-                        updateSegmentedControlAppearance(isDark: newValue)
-                    }
-                    
-                    VStack(spacing: 20) {
-                        if selectedCalculation == "ROT" {
-                            InputField(label: "Speed (knots)", placeholder: "Enter speed", text: $speed)
-                            InputField(label: "Radius (nm)", placeholder: "Enter radius", text: $radius)
-                        } else if selectedCalculation == "Radius" {
-                            InputField(label: "Speed (knots)", placeholder: "Enter speed", text: $speed)
-                            InputField(label: "ROT (deg/min)", placeholder: "Enter ROT", text: $rot)
-                        } else if selectedCalculation == "Speed" {
-                            InputField(label: "ROT (deg/min)", placeholder: "Enter ROT", text: $rot)
-                            InputField(label: "Radius (nm)", placeholder: "Enter radius", text: $radius)
-                        }
-                    }
-                    
-                    Button("Calculate", action: calculate)
-                        .buttonStyle(FilledButtonStyle())
-                        .padding(.horizontal)
-                    
-                    if !result.isEmpty {
-                        Text("Result: \(result)")
-                            .font(.headline)
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("Rate of Turn Calculator")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
                             .foregroundColor(isDark ? .green : .black)
-                            .padding()
+                        
+                        Picker("Calculation", selection: $selectedCalculation) {
+                            Text("ROT").tag("ROT")
+                            Text("Radius").tag("Radius")
+                            Text("Speed").tag("Speed")
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding(.horizontal)
+                        .onAppear {
+                            updateSegmentedControlAppearance(isDark: isDark)
+                        }
+                        .onChange(of: isDark) { newValue in
+                            updateSegmentedControlAppearance(isDark: newValue)
+                        }
+                        
+                        VStack(spacing: 20) {
+                            if selectedCalculation == "ROT" {
+                                HStack(spacing: 16) {
+                                    CompactInputField(label: "Speed", placeholder: "knots", text: $speed)
+                                        .frame(maxWidth: .infinity)
+                                    CompactInputField(label: "Radius", placeholder: "nm", text: $radius)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            } else if selectedCalculation == "Radius" {
+                                HStack(spacing: 16) {
+                                    CompactInputField(label: "Speed", placeholder: "knots", text: $speed)
+                                        .frame(maxWidth: .infinity)
+                                    CompactInputField(label: "ROT", placeholder: " deg/min", text: $rot)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            } else if selectedCalculation == "Speed" {
+                                HStack(spacing: 16) {
+                                    CompactInputField(label: "ROT", placeholder: "deg/min", text: $rot)
+                                        .frame(maxWidth: .infinity)
+                                    CompactInputField(label: "Radius", placeholder: "nm", text: $radius)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            }
+                        }
+                        
+                        Button("Calculate", action: calculate)
+                            .buttonStyle(ModernButtonStyle())
+                            .padding(.horizontal)
+                        
+                        if !result.isEmpty {
+                            Text("Result: \(result)")
+                                .font(.custom("Avenir", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(isDark ? .green : Color("AccentColor"))
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                                        )
+                                )
+                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
                 }
-                .padding()
+                .padding(.vertical)
             }
-            
         }
         .dismissKeyboardOnTap()
         .navigationTitle("Rate of Turn Calculator")

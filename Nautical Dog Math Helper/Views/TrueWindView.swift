@@ -17,61 +17,97 @@ struct TrueWindView: View {
 
     var body: some View {
         ZStack {
-                    (isDark ? Color.black : Color("TileBackground"))
-                        .ignoresSafeArea()
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("True Wind Calculator")
-                                .font(.custom("Avenir", size: 34))
-                                .bold()
-                                .padding()
-                                .foregroundColor(isDark ? .green : .black)
-                            Text("Output is true wind direction and speed.")
-                                .font(.custom("Avenir", size: 16))
-                                .padding()
-                                .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
-                                .foregroundColor(isDark ? .green : .black)
-                                .cornerRadius(8)
+            (isDark ? Color.black : Color("TileBackground"))
+                .ignoresSafeArea()
+            ScrollView {
+                CardContainer {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("True Wind Calculator")
+                            .font(.custom("Avenir-Heavy", size: 36))
+                            .bold()
+                            .foregroundColor(isDark ? .green : .black)
+                        
+                        Text("Output is true wind direction and speed.")
+                            .font(.custom("Avenir", size: 16))
+                            .padding()
+                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                            .foregroundColor(isDark ? .green : .black)
+                            .cornerRadius(8)
 
+                        VStack(spacing: 20) {
+                            // First row - Wind data
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Apparent Wind Speed",
+                                    placeholder: "knots",
+                                    text: $awsInput
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Apparent Wind Angle",
+                                    placeholder: "0-359°",
+                                    text: $awaInput
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            
+                            // Second row - Vessel data
+                            HStack(spacing: 16) {
+                                CompactInputField(
+                                    label: "Vessel Speed",
+                                    placeholder: "knots",
+                                    text: $bsInput
+                                )
+                                .frame(maxWidth: .infinity)
+                                
+                                CompactInputField(
+                                    label: "Vessel Heading",
+                                    placeholder: "0-359°",
+                                    text: $hdgInput
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
 
-                    VStack(spacing: 20) {
-                        InputField(label:       "Apparent Wind Speed (kts)",
-                                   placeholder: "e.g. 12.5",
-                                   text:        $awsInput)
-                        InputField(label:       "Apparent Wind Angle (°)",
-                                   placeholder: "0–359 R",
-                                   text:        $awaInput)
-                        InputField(label:       "Vessel Speed (kts)",
-                                   placeholder: "e.g. 8.0",
-                                   text:        $bsInput)
-                        InputField(label:       "Vessel Heading (°)",
-                                   placeholder: "0–359 T",
-                                   text:        $hdgInput)
-                    }
+                        Button("Calculate") {
+                            calculateTrueWind()
+                        }
+                        .buttonStyle(ModernButtonStyle())
+                        .padding(.horizontal)
 
-                    Button("Calculate") {
-                        calculateTrueWind()
-                    }
-                    .buttonStyle(FilledButtonStyle())
-                    .padding(.horizontal)
-
-                    VStack(spacing: 12) {
-                        if !twsResult.isEmpty {
-                            ResultField(label: "True Wind Speed",
+                        if !twsResult.isEmpty || !twdResult.isEmpty {
+                            VStack(spacing: 12) {
+                                if !twsResult.isEmpty {
+                                    ResultField(
+                                        label: "True Wind Speed",
                                         value: "\(twsResult) kts",
-                                        color: isDark ? .green : .black)
-                        }
-                        if !twdResult.isEmpty {
-                            ResultField(label: "True Wind Direction",
+                                        color: isDark ? .green : Color("AccentColor")
+                                    )
+                                }
+                                if !twdResult.isEmpty {
+                                    ResultField(
+                                        label: "True Wind Direction",
                                         value: "\(twdResult)°",
-                                        color: isDark ? .green : .black)
+                                        color: isDark ? .green : Color("AccentColor")
+                                    )
+                                }
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(isDark ? Color.green.opacity(0.1) : Color("AccentColor").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(isDark ? Color.green.opacity(0.3) : Color("AccentColor").opacity(0.2), lineWidth: 1)
+                                    )
+                            )
                         }
-                    }
-                    .padding()
 
-                    Spacer()
+                        Spacer()
+                    }
                 }
-                .padding()
+                .padding(.vertical)
             }
         }
         .dismissKeyboardOnTap()
