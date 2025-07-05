@@ -119,7 +119,7 @@ struct STDView: View {
             appearance.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
         } else {
             appearance.backgroundColor = UIColor.white
-            appearance.selectedSegmentTintColor = UIColor.systemBlue
+            appearance.selectedSegmentTintColor = UIColor(named: "AccentColor") ?? UIColor.systemBlue
             appearance.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
             appearance.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
         }

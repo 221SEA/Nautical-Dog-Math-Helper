@@ -70,16 +70,7 @@ struct ROTView: View {
                 }
                 .padding()
             }
-            .overlay(
-                Button(action: { dismiss() }) {
-                    Image(systemName: "house.fill")
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .foregroundColor(isDark ? .green : .black)
-                        .padding()
-                },
-                alignment: .bottomLeading
-            )
+            
         }
         .dismissKeyboardOnTap()
         .navigationTitle("Rate of Turn Calculator")
@@ -123,7 +114,7 @@ struct ROTView: View {
             appearance.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
         } else {
             appearance.backgroundColor = UIColor.white
-            appearance.selectedSegmentTintColor = UIColor.systemBlue
+            appearance.selectedSegmentTintColor = UIColor(named: "AccentColor") ?? UIColor.systemBlue
             appearance.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
             appearance.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
         }

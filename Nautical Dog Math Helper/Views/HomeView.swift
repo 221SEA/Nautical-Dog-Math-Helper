@@ -47,9 +47,14 @@ struct HomeView: View {
                         }
                         // ← New tile in lower-right
                         NavigationLink(destination: TrueWindView().environmentObject(nightMode)) {
-                            HomeIcon(title: "True Wind", iconName: "wind", isSystemSymbol: true)
-                        }
-                    }
+                                                    HomeIcon(title: "True Wind", iconName: "wind", isSystemSymbol: true)
+                                                }
+                                                
+                                                // New Watch Schedule tile
+                                                NavigationLink(destination: WatchScheduleView().environmentObject(nightMode)) {
+                                                    HomeIcon(title: "Watch Schedule", iconName: "person.badge.clock", isSystemSymbol: true)
+                                                }
+                                            }
                     .padding(.horizontal)
                     
                     Toggle("Night Mode", isOn: $nightMode.isEnabled)

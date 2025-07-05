@@ -27,15 +27,21 @@ struct AnchorView: View {
                     Text("Anchor Swing Circle Calculator")
                         .font(.custom("Avenir", size: 34))
                         .bold()
-                        .padding(.top)
+                        .padding()
                         .foregroundColor(isDark ? .green : .black)
-                    
+                    Text("Input details and an estimated # of shots on deck.\nOutput: Guidelines for Normal Wx Shots, Rough Wx Shots, Walk Out # of Shots and a calculated Swing Circle")
+                                            .font(.custom("Avenir", size: 16))
+                                            .padding()
+                                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                                            .foregroundColor(isDark ? .green : .black)
+                                            .cornerRadius(8)
+
                     VStack(spacing: 20) {
                         // Using the shared InputField from ReusableComponents.swift
                         InputField(label: "Vessel LOA (meters)", placeholder: "Enter Vessel LOA", text: $vesselLOA)
                         InputField(label: "Bottom Depth (meters)", placeholder: "Enter Bottom Depth", text: $bottomDepth)
                         InputField(label: "Hawsepipe Freeboard (meters)", placeholder: "Enter Freeboard", text: $hawsepipeFreeboard)
-                        InputField(label: "Shackles on Deck (number)", placeholder: "Enter Shackles", text: $shacklesOnDeck)
+                        InputField(label: "Initial Shackles on Deck (number)", placeholder: "Enter Shackles", text: $shacklesOnDeck)
                     }
                     
                     Button("Calculate", action: calculate)

@@ -25,8 +25,15 @@ struct SweptPathView: View {
                     Text("Swept Path Calculator")
                         .font(.custom("Avenir", size: 34))
                         .bold()
-                        .padding(.top)
+                        .padding()
                         .foregroundColor(isDark ? .green : .black)
+                    Text("Output of swept path distances are calculated for 2° - 10° drift angles, in 2° increments. Add an additional angle (i.e. 5°) below to include the results for that angle in the output data.")
+                                            .font(.custom("Avenir", size: 16))
+                                            .padding()
+                                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                                            .foregroundColor(isDark ? .green : .black)
+                                            .cornerRadius(8)
+
                     
                     InputField(label: "Vessel Length (meters)", placeholder: "Enter vessel length", text: $vesselLength)
                     InputField(label: "Vessel Beam (meters)", placeholder: "Enter vessel beam", text: $vesselBeam)

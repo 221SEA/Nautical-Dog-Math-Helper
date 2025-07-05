@@ -25,8 +25,8 @@ struct TurnView: View {
                         .font(.custom("Avenir", size: 34)).bold()
                         .foregroundColor(isDark ? .green : .black)
 
-                    Text("This calculates the distance you need to place your parallel index (PI) line ahead of the ship.")
-                        .font(.custom("Avenir", size: 18))
+                    Text("This calculates the distance you need to place your parallel index (PI) line ahead of the ship. For larger / faster moving ships, you may need to add up to 0.15nm.\nPlace the PI at the intersection of the distance VRM and the true course vector (COG).\nOutput includes delta of c/c for user to check validity of response.")
+                        .font(.custom("Avenir", size: 16))
                         .padding()
                         .background(isDark ? Color.white.opacity(0.05)
                                            : Color.gray.opacity(0.1))
@@ -37,7 +37,7 @@ struct TurnView: View {
                         InputField(label:       "Radius of Turn (nm)",
                                    placeholder: "Enter Radius",
                                    text:        $radius)
-                        InputField(label:       "Leg 1 of Turn (°)",
+                        InputField(label:       "Leg 1 of Turn (°) [COG]",
                                    placeholder: "Enter Leg 1",
                                    text:        $leg1)
                         InputField(label:       "Leg 2 of Turn (°)",
@@ -51,7 +51,7 @@ struct TurnView: View {
 
                     VStack(spacing: 20) {
                         if !piForTurn.isEmpty {
-                            Text("PI for Turn: \(piForTurn) nm")
+                            Text("VRM distance to set PI: \(piForTurn) nm")
                                 .font(.headline)
                                 .foregroundColor(isDark ? .green : .black)
                         }

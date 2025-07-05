@@ -103,6 +103,7 @@ struct ConvertView: View {
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
+                            .accentColor(isDark ? .green : Color("AccentColor"))
                         }
                         HStack {
                             Text("To:")
@@ -113,6 +114,7 @@ struct ConvertView: View {
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
+                            .accentColor(isDark ? .green : Color("AccentColor"))
                         }
                     }
 

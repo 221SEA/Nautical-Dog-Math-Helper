@@ -17,30 +17,24 @@ struct TrueWindView: View {
 
     var body: some View {
         ZStack {
-            (isDark ? Color.black : Color("TileBackground"))
-                .ignoresSafeArea()
+                    (isDark ? Color.black : Color("TileBackground"))
+                        .ignoresSafeArea()
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("True Wind Calculator")
+                                .font(.custom("Avenir", size: 34))
+                                .bold()
+                                .padding()
+                                .foregroundColor(isDark ? .green : .black)
+                            Text("Output is true wind direction and speed.")
+                                .font(.custom("Avenir", size: 16))
+                                .padding()
+                                .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                                .foregroundColor(isDark ? .green : .black)
+                                .cornerRadius(8)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("True Wind Calculator")
-                        .font(.custom("Avenir", size: 34)).bold()
-                        .foregroundColor(isDark ? .green : .black)
 
-                    Text("""
-                    Enter:
-                    • Apparent Wind Speed (kts)  
-                    • Apparent Wind Angle (0–359° Relative)  
-                    • Vessel Speed (kts)  
-                    • Vessel Heading (° True)
-                    """)
-                    .font(.custom("Avenir", size: 16))
-                    .padding()
-                    .background(isDark ? Color.white.opacity(0.05)
-                                       : Color.gray.opacity(0.1))
-                    .cornerRadius(8)
-                    .foregroundColor(isDark ? .green : .black)
-
-                    VStack(spacing: 16) {
+                    VStack(spacing: 20) {
                         InputField(label:       "Apparent Wind Speed (kts)",
                                    placeholder: "e.g. 12.5",
                                    text:        $awsInput)

@@ -33,13 +33,16 @@ struct HawkView: View {
                     Text("Squat & UKC")
                         .font(.custom("Avenir", size: 34))
                         .bold()
-                        .padding(.top)
+                        .padding()
                         .foregroundColor(isDark ? .green : .black)
 
                     Text("Formula used: Squat = 2 x Cb x V² / 100\nOutput: water depth(m); max static draft(m); squat(m); UKC(m)")
-                        .font(.custom("Avenir", size: 16))
-                        .foregroundColor(isDark ? .green : .black)
-                        .padding(.bottom)
+                                            .font(.custom("Avenir", size: 16))
+                                            .padding()
+                                            .background(isDark ? Color.white.opacity(0.05) : Color.gray.opacity(0.1))
+                                            .foregroundColor(isDark ? .green : .black)
+                                            .cornerRadius(8)
+
 
                     VStack(spacing: 20) {
                         // New user‐input for least charted depth
